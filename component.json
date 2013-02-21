@@ -1,0 +1,13 @@
+{
+  "name": "draggy",
+  "repo": "charlottegore/draggy",
+  "description": "A module to make elements draggable",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}
