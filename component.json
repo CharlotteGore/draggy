@@ -4,7 +4,9 @@
   "description": "A module to make elements draggable",
   "version": "0.0.1",
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "jquery" : "*"
+    },
   "development": {},
   "license": "MIT",
   "scripts": [
