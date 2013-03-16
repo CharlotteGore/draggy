@@ -1,7 +1,10 @@
-
 # draggy
 
   A module to make elements draggable
+  
+  UPDATE:
+  
+  Have refactored this module so that it no longer requires jQuery. Minified it's a modest 6k now. Lovely!
 
 ## Installation
 
