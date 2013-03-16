@@ -1,8 +1,10 @@
-var $ = require('jquery');
+var event = require('event');
+var measure = require('measure');
+var css = require('css');
 
 var Draggy = function( el ){
 
-	el.jquery ? this.el = el : this.el = $(el);
+	el.jquery ? this.el = el[0] : this.el = el;
 
 	this.callbacks = {
 		dragStart : function(){},
@@ -44,22 +46,21 @@ Draggy.prototype = {
 	configureDesktop : function(){
 
 		var self = this,
-			startX, startY, lastX, lastY, position;
+			startX, startY, lastX, lastY, position,
+			mouseup, mouseMove, mouseDown,
+			body = document; //document.getElementsByTagName('body')[0];
 
 		var initialiseMove = function( e ){
 
-			$('body').css('cursor', 'all-scroll');
+			var t = measure
 
-	        position = {
-				x : self.el.position().left,
-				y : self.el.position().top		        	
-	        };
+	        position = measure( self.el ).pagePosition();
 
-	       self.el.css({
+	        css(self.el, {
 	       		position: 'absolute',
 	       		top : position.y,
 	       		left : position.x
-	       });
+	        });
 
 	        startY = e.clientY;
 	        startX = e.clientX;
@@ -69,24 +70,21 @@ Draggy.prototype = {
 
 	        self.callbacks.dragStart(position.x, position.y);
 
-			$('body').bind('mouseup', function (e) {
+	        mouseUp = function(e){
 
 	        	self.callbacks.dragStop(position.x, position.y);
 
-	        	//self.el.css({ position : '', top : '', left : ''});
-	            // and we unbind.
-	            $('body').unbind('mousemove');
-	            $('body').unbind('mouseup');
+	            event.unbind( body , 'mousemove', mouseMove);
+	            event.unbind( body, 'mouseup', mouseUp)
 
-	            $('body').css('cursor', 'default');
+	        }
 
-	        });
+	        event.bind( body, "mouseup", mouseUp);
 
 
 		};
 
-		var mouseMove = function mouseMove (e) {
-
+		var mouseMove = function(e) {
 
 	            //e.preventDefault();
 	            // where we move, taking into account the values from the last tick..
@@ -98,8 +96,8 @@ Draggy.prototype = {
 	            	position.x += newX;
 	            	position.y += newY;
 
-	            	self.el[0].style.left = position.x + "px";
-	            	self.el[0].style.top = position.y + "px";
+	            	self.el.style.left = position.x + "px";
+	            	self.el.style.top = position.y + "px";
 
 	            	/*
 	            	self.el.css({
@@ -118,37 +116,34 @@ Draggy.prototype = {
 
         }
 
-		this.el
-			.bind('mousedown', function (e) {
 
-				if(!$(e.target).is('input') && !$(e.target).is('a')){
+        var mouseDown = function (e) {
 
-					$('body').bind('mouseup', function(){
+			//if(!$(e.target).is('input') && !$(e.target).is('a')){
 
+			var abort = function(){
 
-						$('body')
-							.unbind('mousemove')
-							.unbind('mouseup');
+				event.unbind( body, 'mouseup', abort);
+				event.unbind( body, 'mousemove', go);
 
-					});
+			}
 
-					$('body').bind('mousemove', function(e){
+			var go = function(){
 
-						$('body')
-							.unbind('mouseup')
-							.unbind('mousemove');
+				event.unbind( body, 'mouseup', abort);
+				event.unbind( body, 'mousemove', go);
 
-						initialiseMove(e);
+				initialiseMove(e);
 
-						
-						$('body').bind('mousemove', mouseMove);
+				event.bind( body, 'mousemove', mouseMove);
 
+			}
 
-					});
+			event.bind( body, "mouseup", abort);
+			event.bind( body, "mousemove", go);
+		}
 
-				}
-
-			});
+		event.bind( this.el, 'mousedown', mouseDown );
 
 	}
 
