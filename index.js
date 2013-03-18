@@ -121,7 +121,7 @@ Draggy.prototype = {
 
         	var target = (e.target) ? e.target : e.srcElement;
 
-			if(!target.tagName.toLowerCase() === "input"){
+			if(target.tagName.toLowerCase() !== "input"){
 
 				var abort = function(){
 
