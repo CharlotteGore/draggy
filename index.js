@@ -119,28 +119,32 @@ Draggy.prototype = {
 
         var mouseDown = function (e) {
 
-			//if(!$(e.target).is('input') && !$(e.target).is('a')){
+        	var target = (e.target) ? e.target : e.srcElement;
 
-			var abort = function(){
+			if(!target.tagName.toLowerCase() === "input"){
 
-				event.unbind( body, 'mouseup', abort);
-				event.unbind( body, 'mousemove', go);
+				var abort = function(){
+
+					event.unbind( body, 'mouseup', abort);
+					event.unbind( body, 'mousemove', go);
+
+				}
+
+				var go = function(){
+
+					event.unbind( body, 'mouseup', abort);
+					event.unbind( body, 'mousemove', go);
+
+					initialiseMove(e);
+
+					event.bind( body, 'mousemove', mouseMove);
+
+				}
+
+				event.bind( body, "mouseup", abort);
+				event.bind( body, "mousemove", go);
 
 			}
-
-			var go = function(){
-
-				event.unbind( body, 'mouseup', abort);
-				event.unbind( body, 'mousemove', go);
-
-				initialiseMove(e);
-
-				event.bind( body, 'mousemove', mouseMove);
-
-			}
-
-			event.bind( body, "mouseup", abort);
-			event.bind( body, "mousemove", go);
 		}
 
 		event.bind( this.el, 'mousedown', mouseDown );
