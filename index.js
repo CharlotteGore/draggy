@@ -62,8 +62,8 @@ Draggy.prototype = {
 	       		left : position.x
 	        });
 
-	        startY = e.clientY;
-	        startX = e.clientX;
+	        startY = e.clientY + window.scrollY;
+	        startX = e.clientX + window.scrollX;
 
 	        lastY = 0;
 	        lastX = 0;
@@ -88,25 +88,18 @@ Draggy.prototype = {
 
 	            //e.preventDefault();
 	            // where we move, taking into account the values from the last tick..
-	            var newY = (lastY - (e.clientY - startY)) * -1;
-	            var newX = (lastX - (e.clientX - startX)) * -1;
+	            var newY = (lastY - ( (e.clientY) - startY)) * -1;
+	            var newX = (lastX - ( (e.clientX) - startX)) * -1;
 
 	            if ((newX - startX !== lastX) || (newY - startY !== lastY)) {
 
-	            	position.x += newX;
-	            	position.y += newY;
+	            	position.x += (newX);
+	            	position.y += (newY);
 
-	            	self.el.style.left = position.x + "px";
-	            	self.el.style.top = position.y + "px";
+	            	self.el.style.left = (position.x + window.scrollX) + "px";
+	            	self.el.style.top = (position.y + window.scrollY) + "px";
 
-	            	/*
-	            	self.el.css({
-	            		top : position.y,
-	            		left : position.x
-	            	});
-	*/
-
-	            	self.callbacks.dragMove(e.clientX, e.clientY, position.x, position.y, newX, newY);
+	            	self.callbacks.dragMove(e.clientX + window.scrollX, e.clientY + window.scrollY, position.x, position.y, newX, newY);
 
 	            }
 
